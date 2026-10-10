@@ -796,6 +796,7 @@ html[data-season="halloween"] #splash .sp-flash{animation:spflash 2.1s ease-out 
   <section id="view-schedule" class="view"></section>
   <section id="view-todo" class="view" hidden></section>
   <section id="view-goal" class="view" hidden></section>
+  <section id="view-daily" class="view" hidden></section>
   <section id="view-req" class="view" hidden></section>
 </main>
 
@@ -804,6 +805,7 @@ html[data-season="halloween"] #splash .sp-flash{animation:spflash 2.1s ease-out 
     <button class="dtab" role="tab" data-act="tab" data-tab="schedule" aria-selected="true"><span data-ico="cal"></span><span class="lbl">Beosztásom</span></button>
     <button class="dtab" role="tab" data-act="tab" data-tab="todo" aria-selected="false"><span data-ico="list"></span><span class="lbl">Napi teendőim</span><span class="dbadge" id="todoBadge" hidden></span></button>
     <button class="dtab" role="tab" data-act="tab" data-tab="goal" aria-selected="false"><span data-ico="target"></span><span class="lbl">Napi cél</span><span class="dbadge" id="goalBadge" hidden></span></button>
+    <button class="dtab" role="tab" data-act="tab" data-tab="daily" aria-selected="false"><span data-ico="trend"></span><span class="lbl">Napi adatok</span><span class="dbadge" id="dailyBadge" hidden></span></button>
     <button class="dtab" role="tab" data-act="tab" data-tab="req" aria-selected="false"><span data-ico="inbox"></span><span class="lbl">Kéréseim</span><span class="dbadge" id="reqBadge" hidden></span></button>
     <span class="dind" id="dind"></span>
   </div>
@@ -889,23 +891,23 @@ function seed(){
   '2026-10':{events:{},emps:[
     {name:'Szabó András',sheet:158,cells:S('9-17,9-17,P,P,9-20,9-20,8-16,P,P,P,P,9-17,9-17,9-17,9-17,9-17,P,P,9-17,9-17,9-17,9-17,P,P,P,9-17,9-17,9-17,9-17,9-17,P')},
     {name:'Tratnyek László',sheet:169,cells:S('9-20,9-20,9-20,10-18,P,P,P,9-20,SZ,P,P,P,10-20,12-20,10-20,SZ,P,P,10-20,12-20,P,P,P,11-20,10-18,P,P,12-20,9-20,12-20,9-20')},
-    {name:'Mihálek Máté',sheet:180,cells:S('BSZ,BSZ,P,P,P,12-20,9-20,SZ,9-20,P,10-18,12-20,12-20,10-20,P,P,9-20,10-18,P,9-20,P,13-20,P,9-20,P,9-20,9-20,P,P,9-20,9-20')},
+    {name:'Mihalek Máté',sheet:180,cells:S('BSZ,BSZ,P,P,P,12-20,9-20,SZ,9-20,P,10-18,12-20,12-20,10-20,P,P,9-20,10-18,P,9-20,P,13-20,P,9-20,P,9-20,9-20,P,P,9-20,9-20')},
     {name:'Zavada Klaudia',sheet:169,cells:S('12-20,P,9-20,10-18,12-20,P,9-20,P,9-20,9-20,10-18,9-20,P,P,12-20,10-20,9-20,10-18,P,P,15-20,10-20,P,P,P,SZ,12-20,9-15,12-20,P,P')},
-    {name:'Szabi',sheet:103,cells:S('P,12-20,P,P,P,P,P,12-20,12-20,9-20,P,P,P,P,P,12-20,9-20,P,P,P,P,12-20,P,9-20,10-18,9-20,P,9-20,P,P,P')},
+    {name:'Czicza Szabolcs',sheet:103,cells:S('P,12-20,P,P,P,P,P,12-20,12-20,9-20,P,P,P,P,P,12-20,9-20,P,P,P,P,12-20,P,9-20,10-18,9-20,P,9-20,P,P,P')},
     {name:'Kankó Krisz',sheet:147,cells:S('9-18,9-18,P,P,9-15,9-18,9-20,9-18,SZ0,P,P,9-18,SZ0,9-18,9-15,9-20,P,P,9-20,9-15,11-20,9-18,P,P,P,9-17,9-17,9-17,9-17,SZ0,P')}
   ]}
   };
 }
-const ROLES={'Szabó András':'ÜZLETVEZETŐ','Tratnyek László':'ÉRTÉKESÍTŐ','Zavada Klaudia':'ÉRTÉKESÍTŐ','Mihálek Máté':'ÉRTÉKESÍTŐ','Kankó Krisz':'PROMOTER','Szabi':'DIÁK'};
+const ROLES={'Szabó András':'ÜZLETVEZETŐ','Tratnyek László':'ÉRTÉKESÍTŐ','Zavada Klaudia':'ÉRTÉKESÍTŐ','Mihalek Máté':'ÉRTÉKESÍTŐ','Kankó Krisz':'PROMOTER','Czicza Szabolcs':'DIÁK'};
 const roleOf=n=>ROLES[n]||'';
 const roleTag=n=>{const r=roleOf(n);return r?` <small class="rtag">${esc(r)}</small>`:''};
 
 /* ---------- Telefon / tablet TVP kalkulátor ---------- */
 const TVP_PCT=10;
-const KPI_EMP=['Szabó András','Tratnyek László','Mihálek Máté','Zavada Klaudia'];
-const TARTOZEK_TARGET={'Szabó András':45,'Tratnyek László':87,'Mihálek Máté':87,'Zavada Klaudia':87};
+const KPI_EMP=['Szabó András','Tratnyek László','Mihalek Máté','Zavada Klaudia'];
+const TARTOZEK_TARGET={'Szabó András':45,'Tratnyek László':87,'Mihalek Máté':87,'Zavada Klaudia':87};
 const BBOX_TARGET=5, AR_TARGET=17;
-const KPI_SEED={ar:11,bbox:{'Szabó András':1,'Tratnyek László':2,'Mihálek Máté':1,'Zavada Klaudia':1},tartozek:{}};
+const KPI_SEED={ar:11,bbox:{'Szabó András':1,'Tratnyek László':2,'Mihalek Máté':1,'Zavada Klaudia':1},tartozek:{}};
 
 /* ---------- helpers ---------- */
 const hh=x=>Math.floor(x+1e-9), mm=x=>Math.round((x-Math.floor(x+1e-9))*60);
@@ -947,8 +949,36 @@ const label=p=>p.t==='w'?sh(p.s)+'–'+sh(p.e):p.t==='p'?'P':p.t==='sz'?'SZ':p.t
 const longLabel=p=>p.t==='w'?tf(p.s)+'–'+tf(p.e)+' · '+p.h+' ó':p.t==='p'?'Pihenőnap':p.t==='sz'?'Szabadság':p.t==='b'?'Beteg':p.t==='o'?(OTHER_LABELS[p.code]||p.code)+' · '+p.h+' ó':'Nincs adat';
 
 /* ---------- state ---------- */
-const TABS=['schedule','todo','goal','req'];
+const TABS=['schedule','todo','goal','daily','req'];
 const MANAGER='Szabó András';
+
+const _k1='0011';
+function isPinOk(){try{return sessionStorage.getItem('mgrPinOk')==='1'}catch(e){return false}}
+function setPinOk(){try{sessionStorage.setItem('mgrPinOk','1')}catch(e){}}
+function selectPerson(name){
+  st.me=name;if(name)store.set('me',name);else store.del('me');
+  fillMeSel();loadTd();loadGl();renderActive();updateBadges();
+}
+function trySelectPerson(name){
+  if(name===MANAGER&&!isPinOk()){askPin(name);return}
+  selectPerson(name);
+}
+function onMeSelChange(t){
+  const want=t.value||null;
+  if(want===MANAGER&&!isPinOk()){t.value=st.me||'';askPin(want);return}
+  selectPerson(want);
+}
+function askPin(name){
+  openModal(`<h3>Üzletvezetői belépés</h3><p class="muted">Add meg a PIN kódot ${esc(name)} nevében való belépéshez.</p>
+  <label class="f" style="margin-top:12px">PIN kód<input class="in" id="pinVal" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••"></label>
+  <div class="btns"><button class="btn primary" data-act="pinGo" data-n="${esc(name)}">Belépés</button><button class="btn" data-act="modalClose">Mégse</button></div>`);
+  setTimeout(()=>{const i=$('#pinVal');if(i)i.focus()},80);
+}
+function pinSubmit(name){
+  const i=$('#pinVal'),v=i?i.value:'';
+  if(v===_k1){setPinOk();closeModal();selectPerson(name)}
+  else{toast('Hibás PIN kód');if(i){i.value='';i.focus()}}
+}
 const now0=new Date();
 const st={
   tab:TABS.indexOf(store.get('tab','schedule'))>=0?store.get('tab','schedule'):'schedule',
@@ -957,6 +987,9 @@ const st={
   ym:'2026-10', sel:null, td:null, tdKey:'', gl:null, glKey:'', force:false, allDone:false, moDir:0, tvp:{cat:'phone',price:'',result:null}
 };
 st.kpi={mode:'boot',db:null,data:null};
+st.rep={mode:'boot',db:null,list:store.get('rep.local',[]),draft:{ar:'',forgalom:''}};
+st.todos={mode:'boot',db:null};
+st.todosAll={};
 st.rq={mode:'boot',db:null,uid:null,canEdit:undefined,reqs:[],decs:{},msgs:[],local:store.get('rq.local',[]),type:'off',filt:'pending',open:{},draft:{},dirty:false,rendered:false};
 let impText='';
 
@@ -1204,7 +1237,7 @@ function setTab(t,first){
   moveDock();requestAnimationFrame(moveDock);setTimeout(moveDock,480);
   if(!first)window.scrollTo({top:0,behavior:'smooth'});
 }
-function renderTab(t){if(t==='schedule')renderSchedule();else if(t==='todo')renderTodo();else if(t==='goal')renderGoal();else renderReq()}
+function renderTab(t){if(t==='schedule')renderSchedule();else if(t==='todo')renderTodo();else if(t==='goal')renderGoal();else if(t==='daily')renderDaily();else renderReq()}
 function renderActive(){if(st.tab==='schedule')renderPane();else renderTab(st.tab)}
 function pickMeHTML(){
   const names=allNames();
@@ -1521,7 +1554,7 @@ function loadTd(){
   st.td=Object.assign({h:{}},v);if(!st.td.h)st.td.h={};
   st.allDone=false;
 }
-const saveTd=()=>store.set('todo.'+st.tdKey+'.'+st.me,st.td);
+const saveTd=()=>{store.set('todo.'+st.tdKey+'.'+st.me,st.td);syncTodoShared();};
 function todoCounts(pl){
   pl=pl||todoPlan();if(!st.td)return {done:0,total:0};
   let total=pl.slots.length+3,done=pl.slots.filter(h=>st.td.h[h]).length+['acc','vac','mop'].filter(k=>st.td[k]).length;
@@ -1543,6 +1576,10 @@ function updateBadges(){
   if(!st.me||st.rq.mode!=='shared')setBadge(rb,null);
   else if(st.me===MANAGER){const n=st.rq.reqs.filter(r=>!st.rq.decs[r.id]).length;setBadge(rb,n>0?String(n):null,n>0?'warn':'')}
   else{const seen=store.get('seen.'+st.me,{});const n=st.rq.reqs.filter(r=>r.by===st.me&&st.rq.decs[r.id]&&seen[r.id]!==st.rq.decs[r.id].at).length;setBadge(rb,n>0?String(n):null,'ok')}
+  const db3=$('#dailyBadge');
+  if(!st.me||st.rep.mode==='boot')setBadge(db3,null);
+  else if(st.me===MANAGER){const n=(st.rep.list||[]).filter(r=>r.date===todayKey()).length;setBadge(db3,n>0?String(n):null,'ok')}
+  else setBadge(db3,null);
   const gb=$('#goalBadge');
   if(!st.me||!st.gl||goalOver())setBadge(gb,null);
   else if(shiftToday().t!=='w')setBadge(gb,null);
@@ -1557,7 +1594,7 @@ function renderTodo(){
   const pl=todoPlan(),now=new Date(),dow=now.getDay(),sun=dow===0;
   if(pl.off&&!st.force){
     const msg={p:['sun','Ma pihenőnapod van','Nincs mit csinálnod, töltődj fel!'],sz:['sun','Ma szabadságon vagy','Jó pihenést!'],b:['heart','Ma betegszabadságon vagy','Jobbulást!']}[pl.c.t];
-    el.innerHTML=`<div class="card offcard reveal"><span class="e">${ic(msg[0])}</span><h2>${msg[1]}</h2><p class="muted">${msg[2]}</p></div><button class="linkbtn" data-act="force">Mégis mutasd a mai teendőket</button>`;
+    el.innerHTML=managerTodoTeamHTML()+`<div class="card offcard reveal"><span class="e">${ic(msg[0])}</span><h2>${msg[1]}</h2><p class="muted">${msg[2]}</p></div><button class="linkbtn" data-act="force">Mégis mutasd a mai teendőket</button>`;
     after(el);updateBadges();return;
   }
   const untilSun=(7-dow)%7;
@@ -1566,7 +1603,7 @@ function renderTodo(){
   const evBlock=(tev?`<div class="card evcard ${tev.lvl} reveal"><div class="ch"><span class="ico ${tev.lvl==='high'?'coral':'amber'}">${ic(tev.lvl==='high'?'alert':'tool')}</span><div><h3>Ma: ${esc(tev.title)}</h3><p>${esc(tev.note)}</p></div></div>${taskHTML('ev',tev.lvl==='high'?'alert':'tool',tev.lvl==='high'?'coral':'amber',esc(tev.title),esc(tev.note),'data-hot="1"')}</div>`:'')+
     (nev?`<div class="evbanner ${nev.lvl} reveal" style="margin:0 0 14px"><span class="evi">${evIcon(nev)}</span><div><b>Holnap: ${esc(nev.title)}</b><small>${esc(nev.note)}</small></div></div>`:'');
   const range=pl.slots.length?`${pl.slots[0]}:00 – ${pl.slots[pl.slots.length-1]+1}:00`:'';
-  el.innerHTML=`
+  el.innerHTML=managerTodoTeamHTML()+`
   <div class="card ringcard reveal"><div class="ring" id="ring"><svg viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16" pathLength="100"/><circle class="fg" id="ringArc" cx="20" cy="20" r="16" pathLength="100"/></svg><div class="rt" id="ringTxt"><span>0<small>/0</small></span></div></div>
     <div><h2 id="ringMsg"></h2><p id="ringSub"></p></div></div>
   ${evBlock}
@@ -1751,6 +1788,71 @@ function kpiAdjustAr(dir){
   kpiWrite(Object.assign({},data,{ar}));
 }
 
+
+function fmtForgalom(n){return num(n)+NB+'Ft'}
+function dailyFormHTML(){
+  return `<div class="card reveal"><div class="ch"><span class="ico">${ic('trend')}</span><div><h3>Napi adatok</h3><p>Írd be a mai állást, és küldd el ${esc(MANAGER)}nak.</p></div></div>
+  <label class="f">Üzleti AR ma (%)<input class="in" id="repAr" inputmode="decimal" placeholder="pl. 15" value="${esc(st.rep.draft.ar||'')}" autocomplete="off"></label>
+  <label class="f" style="margin-top:10px">Mai forgalom (Ft)<input class="in" id="repForgalom" inputmode="numeric" placeholder="pl. 850 000" value="${esc(st.rep.draft.forgalom||'')}" autocomplete="off"></label>
+  <div class="btns"><button class="btn primary" data-act="repSend">${ic('send')}Küldés</button></div></div>`;
+}
+function dailyListHTML(){
+  const mgr=st.me===MANAGER;
+  const list=(st.rep.list||[]).filter(r=>mgr||r.by===st.me).slice().sort((a,b)=>b.at-a.at).slice(0,40);
+  if(!list.length)return `<div class="card offcard reveal"><span class="e">${ic('trend')}</span><h2>Még nincs beküldött adat</h2><p class="muted">${mgr?'Amint valaki beküldi a napi állást, itt jelenik meg.':'Küldd el az első napi állást fent.'}</p></div>`;
+  return `<div style="margin:6px 2px 12px"><h3 style="font-family:var(--display);font-size:20px;letter-spacing:-.02em">${mgr?'Beérkezett adatok':'Eddigi beküldéseim'}</h3></div>
+  ${list.map((r,i)=>`<div class="rcard pending" style="--k:${i}"><div class="rhead" style="cursor:default">
+  <div class="rtop">${mgr?avatar(r.by):''}<span class="nm">${mgr?esc(r.by):fmtWhen(r.at)}</span>${mgr?`<span class="rdates">${fmtWhen(r.at)}</span>`:''}</div>
+  <div class="rrow"><span class="rtype">${ic('trend')}Üzleti AR: ${r.ar}%</span></div>
+  <div class="rtxt">Forgalom: ${fmtForgalom(r.forgalom)}</div>
+  </div></div>`).join('')}`;
+}
+function renderDaily(){
+  const el=$('#view-daily');
+  if(!st.me){el.innerHTML=pickMeHTML();after(el);updateBadges();return}
+  el.innerHTML=dailyFormHTML()+'<div id="dailyList">'+dailyListHTML()+'</div>';
+  after(el);updateBadges();
+}
+function renderDailyList(){const b=$('#dailyList');if(!b)return;b.innerHTML=dailyListHTML();after($('#view-daily'));}
+function afterRepData(){if(st.tab==='daily')renderDailyList();updateBadges();}
+async function repSend(btn){
+  const arRaw=($('#repAr').value||'').replace(',','.').replace(/[^\d.]/g,'');
+  const fRaw=($('#repForgalom').value||'').replace(/[^\d]/g,'');
+  if(!arRaw||!fRaw){toast('Add meg mindkét értéket.');return}
+  const doc={by:st.me,ar:parseFloat(arRaw),forgalom:parseInt(fRaw,10),date:todayKey(),at:Date.now()};
+  btn.disabled=true;
+  try{
+    if(st.rep.mode==='shared'){await st.rep.db.collection('reports').add(doc)}
+    else{doc.id='l'+doc.at;st.rep.list=[doc].concat(st.rep.list||[]);store.set('rep.local',st.rep.list);renderDailyList()}
+    st.rep.draft={ar:'',forgalom:''};
+    const a=$('#repAr'),f=$('#repForgalom');if(a)a.value='';if(f)f.value='';
+    const r=btn.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2);
+    toast(st.rep.mode==='shared'?'Elküldve, '+MANAGER+' látja':'Elmentve ezen az eszközön');
+  }catch(e){toast(errMsg(e))}
+  finally{btn.disabled=false}
+}
+
+function managerTodoTeamHTML(){
+  if(st.me!==MANAGER)return '';
+  const todayK=todayKey();
+  const names=allNames().filter(n=>n!==MANAGER);
+  const EXTRA=[['acc','Tartozékok'],['vac','Porszívózás'],['mop','Felmosás'],['rep','Heti Riport'],['wmb','WMB'],['ev','Esemény']];
+  const rows=names.map(n=>{
+    const d=(st.todosAll||{})[todayK+':'+n];
+    if(!d)return `<li>${avatar(n)}<span class="nm">${esc(n)}</span><span class="tag n">még nincs adat</span></li>`;
+    const hDone=Object.keys(d.h||{}).filter(k=>d.h[k]).length;
+    const extras=EXTRA.filter(([k])=>d[k]).map(([,l])=>l);
+    return `<li>${avatar(n)}<span class="nm">${esc(n)}</span><span class="tag p">${hDone} óra${extras.length?' · '+esc(extras.join(', ')):''}</span></li>`;
+  });
+  return `<div class="card reveal"><div class="ch"><span class="ico mint">${ic('check')}</span><div><h3>Csapat teendői ma</h3><p>Élőben frissül, ahogy pipálnak</p></div></div>
+  <ul class="dlist">${rows.join('')}</ul></div>`;
+}
+function syncTodoShared(){
+  if(!st.todos||st.todos.mode!=='shared'||!st.todos.db||!st.me)return;
+  const id=st.tdKey+':'+st.me;
+  st.todos.db.doc('todos/'+id).set(Object.assign({name:st.me,date:st.tdKey,at:Date.now()},st.td)).catch(()=>{});
+}
+
 function tvpHTML(){
   return `<div id="tvpBlock">${tvpInner()}</div>`;
 }
@@ -1812,21 +1914,23 @@ function errMsg(e){
 
 async function initDb(){
   const cl=window.claude;
-  const fail=()=>{st.rq.mode='local';st.kpi.mode='local';st.kpi.data=store.get('kpi.local',null);afterRqData();afterKpiData()};
+  const fail=()=>{st.rq.mode='local';st.kpi.mode='local';st.kpi.data=store.get('kpi.local',null);st.rep.mode='local';st.todos.mode='local';afterRqData();afterKpiData();afterRepData()};
   if(!cl||typeof cl.use!=='function'){fail();return}
   try{
     const db=await cl.use('db');
     if(!db){fail();return}
-    st.rq.db=db;st.kpi.db=db;
+    st.rq.db=db;st.kpi.db=db;st.rep.db=db;st.todos.db=db;
     try{
       const u=await cl.use('user');
       if(u){st.rq.uid=await u.id();st.rq.canEdit=await u.canEdit();st.rq.isOwner=await u.isOwner()}
     }catch(e){}
-    const err=e=>{if(e&&e.code==='revoked')toast(errMsg(e));st.rq.mode='local';st.kpi.mode='local';st.kpi.data=store.get('kpi.local',null);afterRqData();afterKpiData()};
+    const err=e=>{if(e&&e.code==='revoked')toast(errMsg(e));st.rq.mode='local';st.kpi.mode='local';st.kpi.data=store.get('kpi.local',null);st.rep.mode='local';st.todos.mode='local';afterRqData();afterKpiData();afterRepData()};
     db.collection('requests').onSnapshot(s=>{st.rq.reqs=s.docs.map(d=>Object.assign({id:d.id},d.data()));afterRqData()},err);
     db.collection('decisions').onSnapshot(s=>{const m={};s.docs.forEach(d=>{m[d.id]=d.data()});st.rq.decs=m;afterRqData()},err);
     db.collection('msgs').onSnapshot(s=>{st.rq.msgs=s.docs.map(d=>Object.assign({id:d.id},d.data()));afterRqData()},err);
     db.collection('kpi').onSnapshot(s=>{const d=s.docs.find(x=>x.id==='store');st.kpi.data=d?d.data():null;st.kpi.mode='shared';afterKpiData()},err);
+    db.collection('reports').onSnapshot(s=>{st.rep.list=s.docs.map(d=>Object.assign({id:d.id},d.data()));st.rep.mode='shared';afterRepData()},err);
+    db.collection('todos').onSnapshot(s=>{const m={};s.docs.forEach(d=>{m[d.id]=d.data()});st.todosAll=m;st.todos.mode='shared';if(st.tab==='todo')renderTodo()},err);
     st.rq.mode='shared';
     afterRqData();
   }catch(e){fail()}
@@ -2028,7 +2132,8 @@ document.addEventListener('click',ev=>{
     case 'mpick':openModal(monthPickerHTML());setTimeout(()=>{const el=document.querySelector('.mprow.sel');if(el)el.scrollIntoView({block:'center'})},60);break;
     case 'mgoto':st.ym=t.dataset.k;st.sel=null;closeModal();renderPane();break;
     case 'sel':selectDay(+t.dataset.d);break;
-    case 'pickMe':st.me=t.dataset.n;store.set('me',st.me);fillMeSel();loadTd();loadGl();renderActive();updateBadges();break;
+    case 'pinGo':pinSubmit(t.dataset.n);break;
+    case 'pickMe':trySelectPerson(t.dataset.n);break;
     case 'edit':openEdit(+t.dataset.e,+t.dataset.d);break;
     case 'chip':{const i=$('#edVal');i.value=t.dataset.v;updateEdPrev();break}
     case 'edSave':saveEdit();break;
@@ -2051,6 +2156,7 @@ document.addEventListener('click',ev=>{
       const b=$('[data-cnt="'+k+'"]');b.textContent=st.gl[k];b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump');
       if(dir>0)burst(ev.clientX,ev.clientY);
       break}
+    case 'repSend':repSend(t);break;
     case 'kpiBbox':kpiAdjust('bbox',t.dataset.n,+t.dataset.dir);break;
     case 'kpiTar':kpiAdjust('tartozek',t.dataset.n,+t.dataset.dir);break;
     case 'kpiAr':kpiAdjustAr(+t.dataset.dir);break;
@@ -2092,7 +2198,7 @@ document.addEventListener('click',ev=>{
 });
 document.addEventListener('change',async ev=>{
   const t=ev.target;
-  if(t.id==='meSel'){st.me=t.value||null;if(st.me)store.set('me',st.me);else store.del('me');loadTd();loadGl();renderActive();updateBadges()}
+  if(t.id==='meSel'){onMeSelChange(t)}
   else if(t.id==='impFile'){await handleFile(t.files[0]);t.value=''}
   else if(t.id==='impM'||t.id==='impY'){updateImpPreview()}
   else if(t.id==='photoFile'){
@@ -2104,6 +2210,8 @@ document.addEventListener('change',async ev=>{
 document.addEventListener('input',ev=>{
   const t=ev.target;
   if(t.dataset&&t.dataset.draft){st.rq.draft[t.dataset.draft]=t.value}
+  else if(t.id==='repAr'){st.rep.draft.ar=t.value}
+  else if(t.id==='repForgalom'){st.rep.draft.forgalom=t.value}
   else if(t.id==='tvpPrice'){st.tvp.price=t.value}
   else if(t.id==='impText'){impText=t.value;updateImpPreview()}
   else if(t.id==='edVal')updateEdPrev();
@@ -2114,6 +2222,8 @@ document.addEventListener('keydown',ev=>{
   if(ev.key==='Enter'&&ev.target.dataset&&/^msg:/.test(ev.target.dataset.draft||'')){ev.preventDefault();const b=ev.target.parentNode.querySelector('[data-act="rqMsg"]');if(b)b.click()}
   if((ev.key==='Enter'||ev.key===' ')&&ev.target.id==='drop'){ev.preventDefault();$('#impFile').click()}
   if(ev.key==='Enter'&&ev.target.id==='tvpPrice'){ev.preventDefault();const b=document.querySelector('[data-act="tvpCalc"]');if(b)b.click()}
+  if(ev.key==='Enter'&&ev.target.id==='pinVal'){ev.preventDefault();const b=document.querySelector('[data-act="pinGo"]');if(b)b.click()}
+  if(ev.key==='Enter'&&(ev.target.id==='repAr'||ev.target.id==='repForgalom')){ev.preventDefault();const b=document.querySelector('[data-act="repSend"]');if(b)b.click()}
 });
 document.addEventListener('dragover',ev=>{const d=ev.target.closest&&ev.target.closest('#drop');if(d){ev.preventDefault();d.classList.add('over')}});
 document.addEventListener('dragleave',ev=>{const d=ev.target.closest&&ev.target.closest('#drop');if(d)d.classList.remove('over')});
@@ -2154,6 +2264,7 @@ try{
   if(ch)saveScheds();
 })();
 $$('[data-ico]').forEach(s=>{s.outerHTML=ic(s.dataset.ico)});
+if(st.me===MANAGER&&!isPinOk()){st.me=null;store.del('me')}
 fillMeSel();tickClock();loadTd();loadGl();setSeason();setTab(st.tab,true);updateBadges();galaxyInit();initHwCanvas('hwCanvasHero');
 initDb();
 window.addEventListener('load',()=>{moveDock();moveSeg()});
