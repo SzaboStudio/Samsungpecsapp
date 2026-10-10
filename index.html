@@ -976,8 +976,23 @@ function askPin(name){
 }
 function pinSubmit(name){
   const i=$('#pinVal'),v=i?i.value:'';
-  if(v===_k1){setPinOk();closeModal();selectPerson(name)}
+  if(v===_k1){setPinOk();closeModal();selectPerson(name);askNotifyPermission()}
   else{toast('Hibás PIN kód');if(i){i.value='';i.focus()}}
+}
+function askNotifyPermission(){
+  try{
+    if(typeof Notification==='undefined')return;
+    if(Notification.permission==='default')Notification.requestPermission().catch(()=>{});
+  }catch(e){}
+}
+function notifyMgr(title,body){
+  try{
+    if(typeof Notification==='undefined')return;
+    if(Notification.permission==='granted'){
+      const n=new Notification(title,{body});
+      n.onclick=()=>{try{window.focus()}catch(e){}};
+    }
+  }catch(e){}
 }
 const now0=new Date();
 const st={
@@ -990,7 +1005,7 @@ st.kpi={mode:'boot',db:null,data:null};
 st.rep={mode:'boot',db:null,list:store.get('rep.local',[]),draft:{ar:'',forgalom:''}};
 st.todos={mode:'boot',db:null};
 st.todosAll={};
-st.rq={mode:'boot',db:null,uid:null,canEdit:undefined,reqs:[],decs:{},msgs:[],local:store.get('rq.local',[]),type:'off',filt:'pending',open:{},draft:{},dirty:false,rendered:false};
+st.rq={mode:'boot',db:null,uid:null,canEdit:undefined,reqs:[],decs:{},msgs:[],local:store.get('rq.local',[]),type:'off',filt:'pending',open:{},draft:{},dirty:false,rendered:false,seen:null};
 let impText='';
 
 const emps=()=>{const s=st.scheds[st.ym];return s?s.emps:[]};
@@ -1925,7 +1940,16 @@ async function initDb(){
       if(u){st.rq.uid=await u.id();st.rq.canEdit=await u.canEdit();st.rq.isOwner=await u.isOwner()}
     }catch(e){}
     const err=e=>{if(e&&e.code==='revoked')toast(errMsg(e));st.rq.mode='local';st.kpi.mode='local';st.kpi.data=store.get('kpi.local',null);st.rep.mode='local';st.todos.mode='local';afterRqData();afterKpiData();afterRepData()};
-    db.collection('requests').onSnapshot(s=>{st.rq.reqs=s.docs.map(d=>Object.assign({id:d.id},d.data()));afterRqData()},err);
+    db.collection('requests').onSnapshot(s=>{
+      const docs=s.docs.map(d=>Object.assign({id:d.id},d.data()));
+      if(st.rq.seen===null){st.rq.seen=new Set(docs.map(d=>d.id))}
+      else{
+        const fresh=docs.filter(d=>!st.rq.seen.has(d.id));
+        fresh.forEach(d=>st.rq.seen.add(d.id));
+        if(st.me===MANAGER)fresh.forEach(d=>{toast('Új kérés érkezett: '+d.by);haptic([16,40,16]);notifyMgr('Új kérés',d.by+' — '+(RTYPES[d.type]?RTYPES[d.type].l:'kérés'))});
+      }
+      st.rq.reqs=docs;afterRqData();
+    },err);
     db.collection('decisions').onSnapshot(s=>{const m={};s.docs.forEach(d=>{m[d.id]=d.data()});st.rq.decs=m;afterRqData()},err);
     db.collection('msgs').onSnapshot(s=>{st.rq.msgs=s.docs.map(d=>Object.assign({id:d.id},d.data()));afterRqData()},err);
     db.collection('kpi').onSnapshot(s=>{const d=s.docs.find(x=>x.id==='store');st.kpi.data=d?d.data():null;st.kpi.mode='shared';afterKpiData()},err);
@@ -2265,6 +2289,7 @@ try{
 })();
 $$('[data-ico]').forEach(s=>{s.outerHTML=ic(s.dataset.ico)});
 if(st.me===MANAGER&&!isPinOk()){st.me=null;store.del('me')}
+else if(st.me===MANAGER)askNotifyPermission();
 fillMeSel();tickClock();loadTd();loadGl();setSeason();setTab(st.tab,true);updateBadges();galaxyInit();initHwCanvas('hwCanvasHero');
 initDb();
 window.addEventListener('load',()=>{moveDock();moveSeg()});
