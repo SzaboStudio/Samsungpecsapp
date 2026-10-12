@@ -1930,20 +1930,49 @@ function errMsg(e){
 
 const SHEET_URL='https://script.google.com/macros/s/AKfycbzyCVzn_NfGlB4FbuQ7-NZbuNkFGcdKdouXZslVN5PvAZPIsmwx7h88oyQvx1TNKZHM/exec';
 function makeSheetDb(base){
-  const pollers={};
-  async function getCol(c){
-    const res=await fetch(base+'?collection='+encodeURIComponent(c)+'&t='+Date.now());
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    return res.json();
-  }
+  const watchers={};
+  const lastJson={};
+  let timer=null,inFlight=false,visible=(typeof document==='undefined'||!document.hidden);
+  function snap(docs){return {docs:(docs||[]).map(d=>({id:d.id,data:()=>d.data}))}}
   async function post(body){
     const res=await fetch(base,{method:'POST',body:JSON.stringify(body)});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const j=await res.json();
-    if(pollers[body.collection])pollers[body.collection]();
+    scheduleNow();
     return j;
   }
-  function snap(docs){return {docs:(docs||[]).map(d=>({id:d.id,data:()=>d.data}))}}
+  async function pollAll(){
+    if(inFlight||!Object.keys(watchers).length)return;
+    inFlight=true;
+    try{
+      const res=await fetch(base+'?all=1&t='+Date.now());
+      if(res.ok){
+        const j=await res.json();
+        const cols=j.collections||{};
+        Object.keys(watchers).forEach(name=>{
+          const docs=cols[name]||[];
+          const js=JSON.stringify(docs);
+          if(js!==lastJson[name]){lastJson[name]=js;watchers[name].next(snap(docs))}
+        });
+      }else{
+        Object.keys(watchers).forEach(name=>{if(watchers[name].err)watchers[name].err({code:'network',message:'HTTP '+res.status})});
+      }
+    }catch(e){
+      Object.keys(watchers).forEach(name=>{if(watchers[name].err)watchers[name].err({code:'network',message:String(e)})});
+    }finally{inFlight=false}
+  }
+  function loop(){
+    clearTimeout(timer);
+    if(visible){pollAll().finally(()=>{timer=setTimeout(loop,25000)})}
+    else timer=setTimeout(loop,25000);
+  }
+  function scheduleNow(){clearTimeout(timer);timer=setTimeout(loop,300)}
+  if(typeof document!=='undefined'){
+    document.addEventListener('visibilitychange',()=>{
+      visible=!document.hidden;
+      if(visible)scheduleNow();
+    });
+  }
   function docRef(c,id){
     return {
       id,
@@ -1954,19 +1983,9 @@ function makeSheetDb(base){
   function collection(c){
     return {
       onSnapshot(next,err){
-        let stopped=false,lastJson=null,timer=null;
-        async function poll(){
-          if(stopped)return;
-          try{
-            const r=await getCol(c);
-            const j=JSON.stringify(r.docs);
-            if(j!==lastJson){lastJson=j;next(snap(r.docs))}
-          }catch(e){if(err)err({code:'network',message:String(e)})}
-          if(!stopped)timer=setTimeout(poll,9000);
-        }
-        pollers[c]=()=>{clearTimeout(timer);poll()};
-        poll();
-        return ()=>{stopped=true;delete pollers[c]};
+        watchers[c]={next,err};
+        if(!timer)loop();else scheduleNow();
+        return ()=>{delete watchers[c]};
       },
       async add(data){const r=await post({collection:c,data});return {id:r.id}},
       doc(id){return docRef(c,id)}
